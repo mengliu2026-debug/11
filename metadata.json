@@ -1,0 +1,8 @@
+{
+  "name": "萌萌学习助手 (Cute Study Hub)",
+  "description": "集合了单词背诵与加减法口算训练的可爱风学习工具，陪伴小朋友快乐成长。",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
