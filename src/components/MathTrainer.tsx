@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Sparkles, Trophy, RotateCcw, Calculator } from "lucide-react";
-import confetti from "canvas-confetti";
 
 interface Question {
   a: number;
@@ -51,61 +50,19 @@ export default function MathTrainer() {
     setFeedback(null);
   }, []);
 
-  const triggerFireworks = useCallback(() => {
-    const duration = 3 * 1000;
-    const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-    function randomInRange(min: number, max: number) {
-      return Math.random() * (max - min) + min;
-    }
-
-    const interval: any = setInterval(function() {
-      const timeLeft = animationEnd - Date.now();
-
-      if (timeLeft <= 0) {
-        return clearInterval(interval);
-      }
-
-      const particleCount = 50 * (timeLeft / duration);
-      // since particles fall down, start a bit higher than random
-      confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
-      confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
-    }, 250);
-  }, []);
-
   const playAmazingSound = useCallback(() => {
     if ("speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
+      window.speechSynthesis.cancel(); // Stop any current speech
       const utterance = new SpeechSynthesisUtterance("Amazing!");
-      
-      // Try to find a male voice
-      const voices = window.speechSynthesis.getVoices();
-      const maleVoice = voices.find(voice => 
-        (voice.name.toLowerCase().includes("male") || 
-         voice.name.toLowerCase().includes("david") || 
-         voice.name.toLowerCase().includes("google uk english male") ||
-         voice.name.toLowerCase().includes("microsoft james")) &&
-        voice.lang.startsWith("en")
-      );
-      
-      if (maleVoice) {
-        utterance.voice = maleVoice;
-      }
-      
       utterance.lang = "en-US";
-      utterance.pitch = 0.9; // Lower pitch for adult male feel
-      utterance.rate = 1.1;
+      utterance.pitch = 1.4; // Softer, cuter pitch
+      utterance.rate = 1;
       window.speechSynthesis.speak(utterance);
     }
   }, []);
 
   useEffect(() => {
     generateQuestion();
-    // Pre-load voices for speech synthesis
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.getVoices();
-    }
   }, [generateQuestion]);
 
   const handleAnswer = (selected: number) => {
@@ -115,7 +72,6 @@ export default function MathTrainer() {
       setFeedback("correct");
       setScore((s) => s + 1);
       playAmazingSound();
-      triggerFireworks();
       setTimeout(() => {
         generateQuestion();
       }, 800);
